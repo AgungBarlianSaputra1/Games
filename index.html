@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Human Verification - Claw Machine</title>
+    <title>Human Verification - Premium Claw Machine</title>
     <style>
         * {
             box-sizing: border-box;
@@ -20,192 +20,191 @@
             user-select: none;
         }
 
-        /* Container Card Utama - Mengikuti lekukan halus rujukan */
+        /* Container Card Utama - Sangat mirip dengan bentuk fisik di rujukan */
         .verification-card {
             background: white;
-            width: 400px;
-            border-radius: 36px;
-            padding: 28px 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.03);
-            border: 1px solid #ebebeb;
-            position: relative;
+            width: 420px;
+            border-radius: 40px;
+            padding: 32px 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.04);
+            border: 1px solid #ededed;
+            text-align: center;
         }
 
         h2 {
             margin: 0 0 6px 0;
-            font-size: 22px;
+            font-size: 24px;
             color: #111;
             font-weight: 600;
             letter-spacing: -0.5px;
         }
 
         .instruction {
-            font-size: 13.5px;
-            color: #666;
-            margin-bottom: 20px;
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 24px;
         }
 
         .target-highlight {
             font-weight: 700;
             color: #b76e2e;
             background: #fff5eb;
-            padding: 3px 8px;
-            border-radius: 6px;
+            padding: 3px 10px;
+            border-radius: 8px;
         }
 
-        /* Tab Kapsul Steps (1 Move, 2 Grab, 3 Drop) */
+        /* Navigasi Kapsul Gendut Mewah */
         .steps-container {
             display: inline-flex;
             background: #f1f3f5;
             padding: 4px;
             border-radius: 30px;
-            margin-bottom: 20px;
-            justify-content: center;
+            margin-bottom: 24px;
         }
         .step {
-            font-size: 13px;
-            padding: 6px 16px;
+            font-size: 13.5px;
+            padding: 8px 20px;
             border-radius: 20px;
-            color: #999;
+            color: #bbb;
             font-weight: 500;
-            background: transparent;
         }
         .step.active {
             background: white;
             color: #111;
             font-weight: 700;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
-        /* Frame Kaca Wahana */
+        /* Kaca Utama Mesin */
         .machine-frame {
             width: 100%;
-            height: 340px;
-            background: #f9f9f9;
-            border: 1px solid #e6e6e6;
-            border-radius: 24px;
+            height: 360px;
+            background: linear-gradient(to bottom, #ffffff 70%, #f7f9fa 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 28px;
             position: relative;
             overflow: hidden;
-            box-shadow: inset 0 4px 10px rgba(0,0,0,0.01);
+            box-shadow: inset 0 4px 20px rgba(0,0,0,0.01);
         }
 
         canvas {
             display: block;
         }
 
-        /* Panel Kontrol Bawah (Joystick, Drop Box, Button) */
+        /* Panel Kontrol Premium 1:1 Seperti Gambar */
         .control-panel {
-            margin-top: 20px;
+            margin-top: 24px;
             background: #f8f9fa;
-            border-radius: 28px;
-            padding: 16px;
+            border-radius: 32px;
+            padding: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border: 1px solid #f0f0f0;
+            border: 1px solid #efefef;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
         }
 
-        /* 1. Joystick Merah (Sisi Kiri) */
+        /* 1. Joystick Merah Premium */
         .joy-base {
-            width: 64px;
-            height: 64px;
-            background: #ffffff;
+            width: 68px;
+            height: 68px;
+            background: linear-gradient(135deg, #ffffff, #e6e6e6);
             border-radius: 50%;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.04), inset 0 -2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #dcdcdc;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05), inset 0 -3px 6px rgba(0,0,0,0.08);
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
             cursor: pointer;
         }
         .joy-center {
-            width: 28px;
-            height: 28px;
-            background: #111;
+            width: 32px;
+            height: 32px;
+            background: #222;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
         }
         .joy-knob {
-            width: 22px;
-            height: 22px;
-            background: #ff4d4d;
+            width: 24px;
+            height: 24px;
+            background: radial-gradient(circle at 35% 35%, #ff6b6b, #cc0000);
             border-radius: 50%;
-            box-shadow: 0 4px 6px rgba(255, 77, 77, 0.4), inset 0 -3px 0 rgba(0,0,0,0.15);
-            transition: transform 0.1s ease;
+            box-shadow: 0 4px 8px rgba(204, 0, 0, 0.4);
+            transition: transform 0.08s ease;
         }
 
-        /* 2. Drop Here Container (Tengah) */
+        /* 2. Drop Here Gate */
         .drop-gate {
             flex-grow: 1;
             margin: 0 16px;
-            height: 64px;
+            height: 68px;
             background: #ffffff;
-            border-radius: 20px;
-            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            border: 1px solid #e5e7eb;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
         }
         .drop-icon {
-            width: 14px;
-            height: 8px;
-            border: 2px solid #aaa;
+            width: 16px;
+            height: 9px;
+            border: 2px solid #b3b3b3;
             border-top: none;
             margin-bottom: 4px;
-            border-radius: 0 0 3px 3px;
+            border-radius: 0 0 4px 4px;
         }
         .drop-gate span {
             font-size: 13px;
-            color: #666;
-            font-weight: 500;
+            color: #555;
+            font-weight: 600;
+            letter-spacing: -0.2px;
         }
 
-        /* 3. Tombol Bulat Besar Pencapit (Sisi Kanan) */
+        /* 3. Tombol Bulat Pokéball Kanan */
         .btn-capture {
-            width: 64px;
-            height: 64px;
+            width: 68px;
+            height: 68px;
             border-radius: 50%;
-            border: 1px solid #dcdcdc;
+            border: 2px solid #cccccc;
             background: white;
             position: relative;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            overflow: hidden;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.04);
+            transition: transform 0.1s;
         }
         .btn-capture::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 50%;
-            background: #f1f3f5;
-            border-bottom: 1px solid #dcdcdc;
+            background: #ededed;
+            border-bottom: 2px solid #cccccc;
         }
         .btn-capture::after {
             content: '';
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 18px; height: 18px;
+            width: 20px; height: 20px;
             background: white;
-            border: 1px solid #dcdcdc;
+            border: 2px solid #cccccc;
             border-radius: 50%;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .btn-capture:active {
-            transform: scale(0.96);
+            transform: scale(0.95);
         }
 
         .footer-text {
-            margin-top: 16px;
-            font-size: 12px;
-            color: #aaa;
+            margin-top: 18px;
+            font-size: 11.5px;
+            color: #bbb;
         }
 
-        /* Overlay Status */
         #status-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -215,7 +214,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 20px;
             display: none;
             z-index: 10;
         }
@@ -225,7 +224,7 @@
 
     <div class="verification-card">
         <h2>Verify you're human</h2>
-        <div class="instruction">Use the claw to pick up the <span class="target-highlight" id="target-name">🤠 Woody</span></div>
+        <div class="instruction">Use the claw to pick up the <span class="target-highlight" id="target-name">Eevee</span></div>
 
         <div class="steps-container">
             <div class="step active" id="step1">1 Move</div>
@@ -234,7 +233,7 @@
         </div>
 
         <div class="machine-frame">
-            <canvas id="clawCanvas" width="352" height="340"></canvas>
+            <canvas id="clawCanvas" width="370" height="360"></canvas>
             <div id="status-overlay"></div>
         </div>
 
@@ -256,6 +255,52 @@
         <div class="footer-text">Joystick or ◀ ▶ / A D to move • Space to grab & drop</div>
     </div>
 
+    <!-- SEMUA HADIAH DIUBAH MENJADI VEKTOR SVG ASLI BIAR BENAR-BENAR MIRIP SEPERTI GAMBAR POKÉMON -->
+    <svg id="svg-assets" style="display: none;">
+        <!-- 1. Pikachu SVG -->
+        <g id="pikachu">
+            <ellipse cx="25" cy="28" rx="18" ry="15" fill="#fcd34d"/>
+            <polygon points="12,16 6,2 14,10" fill="#fcd34d"/>
+            <polygon points="6,2 8,6 10,8" fill="#111"/>
+            <polygon points="38,16 44,2 36,10" fill="#fcd34d"/>
+            <polygon points="44,2 42,6 40,8" fill="#111"/>
+            <circle cx="18" cy="24" r="2.5" fill="#111"/>
+            <circle cx="32" cy="24" r="2.5" fill="#111"/>
+            <circle cx="13" cy="29" r="3.5" fill="#ef4444"/>
+            <circle cx="37" cy="29" r="3.5" fill="#ef4444"/>
+            <path d="M 22 28 Q 25 30 28 28" stroke="#111" stroke-width="1.5" fill="none"/>
+        </g>
+        <!-- 2. Eevee SVG -->
+        <g id="eevee">
+            <ellipse cx="25" cy="28" rx="17" ry="14" fill="#b45309"/>
+            <polygon points="15,16 5,0 13,10" fill="#b45309"/>
+            <polygon points="35,16 45,0 37,10" fill="#b45309"/>
+            <circle cx="18" cy="25" r="2.5" fill="#111"/>
+            <circle cx="32" cy="25" r="2.5" fill="#111"/>
+            <polygon points="23,27 27,27 25,29" fill="#111"/>
+            <path d="M 12 34 Q 25 42 38 34" stroke="#fef08a" stroke-width="6" fill="none" stroke-linecap="round"/>
+        </g>
+        <!-- 3. Bulbasaur SVG -->
+        <g id="bulbasaur">
+            <ellipse cx="25" cy="28" rx="19" ry="15" fill="#2dd4bf"/>
+            <path d="M 14 18 Q 25 6 36 18 Z" fill="#14b8a6"/>
+            <polygon points="10,18 8,12 15,16" fill="#2dd4bf"/>
+            <polygon points="40,18 42,12 35,16" fill="#2dd4bf"/>
+            <ellipse cx="17" cy="25" rx="3" ry="2" fill="#ef4444"/>
+            <ellipse cx="33" cy="25" rx="3" ry="2" fill="#ef4444"/>
+        </g>
+        <!-- 4. Snorlax SVG -->
+        <g id="snorlax">
+            <circle cx="25" cy="28" r="18" fill="#1e3a8a"/>
+            <ellipse cx="25" cy="29" rx="14" ry="13" fill="#fef08a"/>
+            <polygon points="14,14 10,8 18,12" fill="#1e3a8a"/>
+            <polygon points="36,14 40,8 32,12" fill="#1e3a8a"/>
+            <line x1="16" y1="24" x2="20" y2="24" stroke="#111" stroke-width="2"/>
+            <line x1="30" y1="24" x2="34" y2="24" stroke="#111" stroke-width="2"/>
+            <path d="M 22 29 Q 25 27 28 29" stroke="#111" stroke-width="1.5" fill="none"/>
+        </g>
+    </svg>
+
     <script>
         const canvas = document.getElementById('clawCanvas');
         const ctx = canvas.getContext('2d');
@@ -270,47 +315,55 @@
         const step2 = document.getElementById('step2');
         const step3 = document.getElementById('step3');
 
+        // Mengonversi ID SVG ke Image Object di HTML5 Canvas
+        function createImgFromSvgId(id) {
+            const svgEl = document.getElementById(id);
+            const svgString = new XMLSerializer().serializeToString(svgEl);
+            const blob = new Blob([svgString], {type: 'image/svg+xml;charset=utf-8'});
+            const URL = window.URL || window.webkitURL || window;
+            const blobURL = URL.createObjectURL(blob);
+            const image = new Image();
+            image.src = blobURL;
+            return image;
+        }
+
         const pool = [
-            { name: 'Woody', emoji: '🤠', color: '#f39c12' },
-            { name: 'Buzz', emoji: '🚀', color: '#2ecc71' },
-            { name: 'Alien', emoji: '👁️', color: '#9b59b6' },
-            { name: 'Lotso', emoji: '🐻', color: '#e91e63' },
-            { name: 'Rex', emoji: '🦖', color: '#27ae60' }
+            { name: 'Eevee', id: 'eevee' },
+            { name: 'Pikachu', id: 'pikachu' },
+            { name: 'Bulbasaur', id: 'bulbasaur' },
+            { name: 'Snorlax', id: 'snorlax' }
         ];
 
         const targetToy = pool[Math.floor(Math.random() * pool.length)];
-        targetNameEl.innerHTML = `${targetToy.emoji} ${targetToy.name}`;
+        targetNameEl.innerText = targetToy.name;
 
         let gameState = 'move'; 
         let toys = [];
         
         const claw = {
-            x: 176,
+            x: 185,
             y: 50, 
             baseY: 50,
-            speed: 3.5,
+            speed: 4,
             angle: 0,
             targetAngle: 0,
             caughtToy: null
         };
 
-        // Menginisialisasi boneka dengan efek tumpukan acak agar estetik
         function initToys() {
             let targetIdx = Math.floor(Math.random() * 5);
             for(let i=0; i<5; i++) {
                 let toyData = (i === targetIdx) ? targetToy : pool.filter(p => p.name !== targetToy.name)[Math.floor(Math.random() * (pool.length-1))];
                 toys.push({
                     name: toyData.name,
-                    emoji: toyData.emoji,
-                    color: toyData.color,
-                    x: 65 + (i * 56) + (Math.random() * 8 - 4), // variasi posisi x sedikit acak
-                    y: 295 + (Math.random() * 10 - 5),          // tumpukan agak naik turun alami
-                    radius: 24
+                    imgObj: createImgFromSvgId(toyData.id),
+                    x: 75 + (i * 54) + (Math.random() * 6 - 3), 
+                    y: 310 + (Math.random() * 8 - 4), 
+                    radius: 25
                 });
             }
         }
 
-        // Tali spiral meliuk tipis sempurna sesuai rujukan gambar
         function drawCoiledSpring(startX, startY, endY, swayOffset) {
             ctx.save();
             ctx.translate(startX, startY);
@@ -318,9 +371,9 @@
             ctx.moveTo(0, 0);
             
             let totalY = endY - startY;
-            let segments = 28; 
+            let segments = 32; 
             let h = totalY / segments;
-            let r = 5; 
+            let r = 4.5; 
 
             for (let i = 0; i <= segments; i++) {
                 let x = Math.sin(i * Math.PI) * r;
@@ -328,7 +381,7 @@
                 ctx.lineTo(x + sway, i * h);
             }
 
-            ctx.strokeStyle = '#ccc';
+            ctx.strokeStyle = '#cccccc';
             ctx.lineWidth = 1.5;
             ctx.lineJoin = 'round';
             ctx.stroke();
@@ -336,76 +389,58 @@
         }
 
         function drawClaw() {
-            // Rel Horizontal Atas Grey
-            ctx.fillStyle = '#e0e0e0';
-            ctx.fillRect(15, 20, canvas.width - 30, 4);
+            // Jalur Trek Atas Slim Abu-abu
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillRect(15, 20, canvas.width - 30, 3);
             
-            // Troli Roda Ganda (Kecil imut seperti gambar)
-            ctx.fillStyle = '#9e9e9e';
-            ctx.beginPath();
-            ctx.arc(claw.x - 5, 20, 3, 0, Math.PI * 2);
-            ctx.arc(claw.x + 5, 20, 3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillRect(claw.x - 10, 18, 20, 4);
+            // Rumah Roda Atas 
+            ctx.fillStyle = '#64748b';
+            ctx.fillRect(claw.x - 12, 17, 24, 6);
 
             let swayX = Math.sin(claw.angle) * (claw.y - 20);
-            drawCoiledSpring(claw.x, 22, claw.y, swayX);
+            drawCoiledSpring(claw.x, 23, claw.y, swayX);
 
             let cx = claw.x + swayX;
             let cy = claw.y;
 
-            // Kepala Cakar Merah Kecil
-            ctx.fillStyle = '#ff4d4d';
-            ctx.fillRect(cx - 4, cy, 8, 10);
-            
-            // Mekanisme Sendi Cakar
-            ctx.fillStyle = '#757575';
+            // Dudukan Kepala Merah Bulat Kecil
+            ctx.fillStyle = '#ef4444';
             ctx.beginPath();
-            ctx.arc(cx, cy + 10, 3, 0, Math.PI * 2);
+            ctx.arc(cx, cy + 3, 5, 0, Math.PI * 2);
             ctx.fill();
+            
+            // Batang Pusat Logam
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy + 3);
+            ctx.lineTo(cx, cy + 12);
+            ctx.stroke();
 
-            // Lebar Bukaan Cakar
-            let open = (gameState === 'dropping' || gameState === 'grabbing') ? 16 : 7;
+            let open = (gameState === 'dropping' || gameState === 'grabbing') ? 16 : 6;
 
-            ctx.strokeStyle = '#616161';
+            ctx.strokeStyle = '#475569';
             ctx.lineWidth = 2.5;
             ctx.lineCap = 'round';
 
-            // Sayap Cakar Kiri
+            // Kaki Capit Kiri Berlekuk Sempurna
             ctx.beginPath();
-            ctx.moveTo(cx, cy + 10);
-            ctx.quadraticCurveTo(cx - open, cy + 18, cx - open + 2, cy + 28);
+            ctx.moveTo(cx, cy + 12);
+            ctx.quadraticCurveTo(cx - open, cy + 18, cx - open + 3, cy + 30);
             ctx.stroke();
 
-            // Sayap Cakar Kanan
+            // Kaki Capit Kanan Berlekuk Sempurna
             ctx.beginPath();
-            ctx.moveTo(cx, cy + 10);
-            ctx.quadraticCurveTo(cx + open, cy + 18, cx + open - 2, cy + 28);
+            ctx.moveTo(cx, cy + 12);
+            ctx.quadraticCurveTo(cx + open, cy + 18, cx + open - 3, cy + 30);
             ctx.stroke();
         }
 
         function drawToys() {
-            // Gambar tumpukan boneka bulat penuh warna dengan emoji besar di tengah
             toys.forEach(toy => {
                 ctx.save();
-                ctx.shadowColor = 'rgba(0,0,0,0.04)';
-                ctx.shadowBlur = 6;
-                ctx.shadowOffsetY = 3;
-
-                ctx.beginPath();
-                ctx.arc(toy.x, toy.y, toy.radius, 0, Math.PI * 2);
-                ctx.fillStyle = toy.color + '25'; // Transparansi mewah lembut
-                ctx.fill();
-                ctx.strokeStyle = toy.color + '66';
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-
-                ctx.shadowBlur = 0; 
-                ctx.shadowOffsetY = 0;
-                ctx.font = "26px Arial";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.fillText(toy.emoji, toy.x, toy.y);
+                // Gambar Vektor Boneka Hasil Render SVG
+                ctx.drawImage(toy.imgObj, toy.x - 25, toy.y - 25, 50, 50);
                 ctx.restore();
             });
         }
@@ -414,7 +449,6 @@
             step1.classList.remove('active');
             step2.classList.remove('active');
             step3.classList.remove('active');
-            if(num === 1) step1.add('active'); // handled via normal toggle safely
             document.getElementById(`step${num}`).classList.add('active');
         }
 
@@ -427,14 +461,14 @@
 
             if (gameState === 'dropping') {
                 claw.y += claw.speed;
-                if (claw.y >= 255) { 
+                if (claw.y >= 275) { 
                     gameState = 'grabbing';
                     changeStepUI(2);
                     
                     setTimeout(() => {
                         toys.forEach((toy, idx) => {
                             let dist = Math.abs(realX - toy.x);
-                            if (dist < 26 && !claw.caughtToy) {
+                            if (dist < 28 && !claw.caughtToy) {
                                 claw.caughtToy = toy;
                                 toys.splice(idx, 1);
                             }
@@ -466,15 +500,15 @@
                         gameState = 'done';
                         
                         if (finalToy.name === targetToy.name) {
-                            overlay.innerHTML = "<span style='color:#2ecc71'>✅ Verification Success</span>";
+                            overlay.innerHTML = "<span style='color:#10b981'>✅ Verification Success</span>";
                             overlay.style.display = "flex";
                         } else {
-                            overlay.innerHTML = "<span style='color:#e74c3c'>❌ Incorrect Object</span>";
+                            overlay.innerHTML = "<span style='color:#ef4444'>❌ Incorrect Object</span>";
                             overlay.style.display = "flex";
                             setTimeout(() => { location.reload(); }, 2000);
                         }
                     } else {
-                        overlay.innerHTML = "<span style='color:#7f8c8d'>💨 Missed! Try Again</span>";
+                        overlay.innerHTML = "<span style='color:#6b7280'>💨 Missed! Try Again</span>";
                         overlay.style.display = "flex";
                         setTimeout(() => { location.reload(); }, 2000);
                     }
@@ -485,11 +519,11 @@
         function loop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Kotak Pembuangan Kiri Bawah (Drop Hole)
-            ctx.fillStyle = '#f1f3f5';
-            ctx.fillRect(15, 275, 60, 65);
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.strokeRect(15, 275, 60, 65);
+            // Drop Area Box Kiri Bawah
+            ctx.fillStyle = '#f3f4f6';
+            ctx.fillRect(15, 290, 60, 70);
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.strokeRect(15, 290, 60, 70);
 
             drawToys();
             drawClaw();
@@ -499,7 +533,7 @@
 
         function controlLeft() {
             if (gameState !== 'move') return;
-            if (claw.x > 95) {
+            if (claw.x > 100) {
                 claw.x -= 4;
                 claw.targetAngle = 0.04;
                 joyKnob.style.transform = 'translate(-8px, 0)';
@@ -519,12 +553,10 @@
             joyKnob.style.transform = 'translate(0, 0)';
         }
 
-        // Event Listener Klik Tombol Bulat
         actionBtn.addEventListener('click', () => {
             if (gameState === 'move') gameState = 'dropping';
         });
 
-        // Event Listener Gerak Keyboard
         window.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') controlLeft();
             if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') controlRight();
@@ -534,7 +566,6 @@
             if (['ArrowLeft','a','A','ArrowRight','d','D'].includes(e.key)) releaseJoy();
         });
 
-        // Mouse Drag Emulator untuk Joystick di Layar
         let activeDrag = false;
         joyBase.addEventListener('mousedown', () => activeDrag = true);
         window.addEventListener('mouseup', () => { activeDrag = false; releaseJoy(); });
