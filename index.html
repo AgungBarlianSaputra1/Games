@@ -3,142 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Human Verification - Toy Story</title>
+    <title>Human Verification - Claw Machine</title>
     <style>
         * {
             box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
         body {
             margin: 0;
             padding: 0;
             background: #f4f6f8;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            user-select: none;
         }
 
+        /* Container Card Utama - Mengikuti lekukan halus rujukan */
         .verification-card {
             background: white;
-            width: 380px;
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            text-align: center;
-            border: 1px solid #eaeaea;
+            width: 400px;
+            border-radius: 36px;
+            padding: 28px 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+            border: 1px solid #ebebeb;
+            position: relative;
         }
 
         h2 {
-            margin: 0 0 4px 0;
-            font-size: 20px;
-            color: #1a1a1a;
+            margin: 0 0 6px 0;
+            font-size: 22px;
+            color: #111;
             font-weight: 600;
+            letter-spacing: -0.5px;
         }
 
         .instruction {
-            font-size: 13px;
+            font-size: 13.5px;
             color: #666;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .target-highlight {
-            font-weight: bold;
-            color: #d35400;
-            background: #fef5e7;
-            padding: 2px 6px;
-            border-radius: 4px;
+            font-weight: 700;
+            color: #b76e2e;
+            background: #fff5eb;
+            padding: 3px 8px;
+            border-radius: 6px;
         }
 
-        .steps-indicator {
-            display: flex;
+        /* Tab Kapsul Steps (1 Move, 2 Grab, 3 Drop) */
+        .steps-container {
+            display: inline-flex;
+            background: #f1f3f5;
+            padding: 4px;
+            border-radius: 30px;
+            margin-bottom: 20px;
             justify-content: center;
-            gap: 8px;
-            margin-bottom: 16px;
         }
         .step {
-            font-size: 12px;
-            padding: 6px 12px;
+            font-size: 13px;
+            padding: 6px 16px;
             border-radius: 20px;
-            background: #f5f5f5;
             color: #999;
+            font-weight: 500;
+            background: transparent;
         }
         .step.active {
-            background: #111;
-            color: white;
-            font-weight: bold;
+            background: white;
+            color: #111;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
 
-        #machine-display {
+        /* Frame Kaca Wahana */
+        .machine-frame {
             width: 100%;
-            height: 280px;
-            background: linear-gradient(to bottom, #ffffff, #f7f9fa);
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
+            height: 340px;
+            background: #f9f9f9;
+            border: 1px solid #e6e6e6;
+            border-radius: 24px;
             position: relative;
             overflow: hidden;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.01);
         }
 
         canvas {
             display: block;
         }
 
+        /* Panel Kontrol Bawah (Joystick, Drop Box, Button) */
         .control-panel {
-            margin-top: 16px;
+            margin-top: 20px;
             background: #f8f9fa;
-            border-radius: 16px;
-            padding: 12px;
+            border-radius: 28px;
+            padding: 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
+            border: 1px solid #f0f0f0;
         }
 
-        .joystick-wrapper {
-            display: flex;
-            gap: 4px;
-        }
-        .joy-btn {
-            width: 36px;
-            height: 36px;
+        /* 1. Joystick Merah (Sisi Kiri) */
+        .joy-base {
+            width: 64px;
+            height: 64px;
+            background: #ffffff;
             border-radius: 50%;
-            border: 1px solid #ddd;
-            background: white;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04), inset 0 -2px 5px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            user-select: none;
-        }
-        .joy-btn:active { background: #eee; }
-
-        .action-button {
-            flex-grow: 1;
-            height: 44px;
-            border-radius: 12px;
-            border: none;
-            background: #111;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
+            position: relative;
             cursor: pointer;
-            transition: background 0.2s;
         }
-        .action-button:hover { background: #222; }
-        .action-button:disabled { background: #ccc; cursor: not-allowed; }
+        .joy-center {
+            width: 28px;
+            height: 28px;
+            background: #111;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .joy-knob {
+            width: 22px;
+            height: 22px;
+            background: #ff4d4d;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(255, 77, 77, 0.4), inset 0 -3px 0 rgba(0,0,0,0.15);
+            transition: transform 0.1s ease;
+        }
 
-        .footer-hint {
-            margin-top: 12px;
-            font-size: 11px;
+        /* 2. Drop Here Container (Tengah) */
+        .drop-gate {
+            flex-grow: 1;
+            margin: 0 16px;
+            height: 64px;
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .drop-icon {
+            width: 14px;
+            height: 8px;
+            border: 2px solid #aaa;
+            border-top: none;
+            margin-bottom: 4px;
+            border-radius: 0 0 3px 3px;
+        }
+        .drop-gate span {
+            font-size: 13px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* 3. Tombol Bulat Besar Pencapit (Sisi Kanan) */
+        .btn-capture {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 1px solid #dcdcdc;
+            background: white;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        .btn-capture::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 50%;
+            background: #f1f3f5;
+            border-bottom: 1px solid #dcdcdc;
+        }
+        .btn-capture::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 18px; height: 18px;
+            background: white;
+            border: 1px solid #dcdcdc;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .btn-capture:active {
+            transform: scale(0.96);
+        }
+
+        .footer-text {
+            margin-top: 16px;
+            font-size: 12px;
             color: #aaa;
         }
 
+        /* Overlay Status */
         #status-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.95);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -156,26 +227,33 @@
         <h2>Verify you're human</h2>
         <div class="instruction">Use the claw to pick up the <span class="target-highlight" id="target-name">🤠 Woody</span></div>
 
-        <div class="steps-indicator">
+        <div class="steps-container">
             <div class="step active" id="step1">1 Move</div>
             <div class="step" id="step2">2 Grab</div>
             <div class="step" id="step3">3 Drop</div>
         </div>
 
-        <div id="machine-display">
-            <canvas id="clawCanvas" width="330" height="280"></canvas>
+        <div class="machine-frame">
+            <canvas id="clawCanvas" width="352" height="340"></canvas>
             <div id="status-overlay"></div>
         </div>
 
         <div class="control-panel">
-            <div class="joystick-wrapper">
-                <button class="joy-btn" id="left-btn">◀</button>
-                <button class="joy-btn" id="right-btn">▶</button>
+            <div class="joy-base" id="joy-base">
+                <div class="joy-center">
+                    <div class="joy-knob" id="joy-knob"></div>
+                </div>
             </div>
-            <button class="action-button" id="action-btn">GRAB</button>
+            
+            <div class="drop-gate">
+                <div class="drop-icon"></div>
+                <span>Drop here</span>
+            </div>
+
+            <div class="btn-capture" id="action-btn"></div>
         </div>
 
-        <div class="footer-hint">Gunakan tombol atau Keyboard (A/D atau ◀/▶ untuk gerak, Space untuk capit)</div>
+        <div class="footer-text">Joystick or ◀ ▶ / A D to move • Space to grab & drop</div>
     </div>
 
     <script>
@@ -185,13 +263,15 @@
         const targetNameEl = document.getElementById('target-name');
         const actionBtn = document.getElementById('action-btn');
         const overlay = document.getElementById('status-overlay');
+        const joyKnob = document.getElementById('joy-knob');
+        const joyBase = document.getElementById('joy-base');
         
         const step1 = document.getElementById('step1');
         const step2 = document.getElementById('step2');
         const step3 = document.getElementById('step3');
 
         const pool = [
-            { name: 'Woody', emoji: '🤠', color: '#f1c40f' },
+            { name: 'Woody', emoji: '🤠', color: '#f39c12' },
             { name: 'Buzz', emoji: '🚀', color: '#2ecc71' },
             { name: 'Alien', emoji: '👁️', color: '#9b59b6' },
             { name: 'Lotso', emoji: '🐻', color: '#e91e63' },
@@ -205,14 +285,16 @@
         let toys = [];
         
         const claw = {
-            x: 165,
+            x: 176,
             y: 50, 
-            width: 30,
-            height: 20,
-            speed: 3,
+            baseY: 50,
+            speed: 3.5,
+            angle: 0,
+            targetAngle: 0,
             caughtToy: null
         };
 
+        // Menginisialisasi boneka dengan efek tumpukan acak agar estetik
         function initToys() {
             let targetIdx = Math.floor(Math.random() * 5);
             for(let i=0; i<5; i++) {
@@ -221,127 +303,162 @@
                     name: toyData.name,
                     emoji: toyData.emoji,
                     color: toyData.color,
-                    x: 45 + (i * 60),
-                    y: 250,
-                    radius: 20
+                    x: 65 + (i * 56) + (Math.random() * 8 - 4), // variasi posisi x sedikit acak
+                    y: 295 + (Math.random() * 10 - 5),          // tumpukan agak naik turun alami
+                    radius: 24
                 });
             }
         }
 
-        // FUNGSI BARU: Menggambar tali zigzag yang aman & anti-eror
-        function drawSmoothRope(startX, startY, endY) {
+        // Tali spiral meliuk tipis sempurna sesuai rujukan gambar
+        function drawCoiledSpring(startX, startY, endY, swayOffset) {
+            ctx.save();
+            ctx.translate(startX, startY);
             ctx.beginPath();
-            ctx.moveTo(startX, startY);
+            ctx.moveTo(0, 0);
             
-            let totalLength = endY - startY;
-            let totalSegments = 16; // Jumlah tekukan dikunci statis agar mulus
-            let segmentHeight = totalLength / totalSegments;
-            let amplitude = 5;
+            let totalY = endY - startY;
+            let segments = 28; 
+            let h = totalY / segments;
+            let r = 5; 
 
-            for (let i = 1; i < totalSegments; i++) {
-                let nextY = startY + (i * segmentHeight);
-                let direction = (i % 2 === 0) ? 1 : -1;
-                ctx.lineTo(startX + (amplitude * direction), nextY);
+            for (let i = 0; i <= segments; i++) {
+                let x = Math.sin(i * Math.PI) * r;
+                let sway = (i / segments) * swayOffset;
+                ctx.lineTo(x + sway, i * h);
             }
 
-            ctx.lineTo(startX, endY);
-            ctx.strokeStyle = '#b2bec3';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1.5;
             ctx.lineJoin = 'round';
             ctx.stroke();
+            ctx.restore();
         }
 
         function drawClaw() {
-            // Rel Atas
-            ctx.fillStyle = '#e2e8f0';
-            ctx.fillRect(0, 0, canvas.width, 10);
+            // Rel Horizontal Atas Grey
+            ctx.fillStyle = '#e0e0e0';
+            ctx.fillRect(15, 20, canvas.width - 30, 4);
             
-            // Troli
-            ctx.fillStyle = '#636e72';
-            ctx.fillRect(claw.x - 10, 5, 20, 8);
-
-            // Gambar Tali
-            drawSmoothRope(claw.x, 12, claw.y);
-
-            // Kepala Capit
-            ctx.fillStyle = '#d63031';
-            ctx.fillRect(claw.x - 8, claw.y, 16, 12);
-
-            // Cakar kiri & kanan
-            ctx.strokeStyle = '#636e72';
-            ctx.lineWidth = 3;
-            let openSpread = (gameState === 'dropping' || gameState === 'grabbing') ? 14 : 6;
-
+            // Troli Roda Ganda (Kecil imut seperti gambar)
+            ctx.fillStyle = '#9e9e9e';
             ctx.beginPath();
-            ctx.moveTo(claw.x - 4, claw.y + 12);
-            ctx.lineTo(claw.x - openSpread, claw.y + 26);
+            ctx.arc(claw.x - 5, 20, 3, 0, Math.PI * 2);
+            ctx.arc(claw.x + 5, 20, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillRect(claw.x - 10, 18, 20, 4);
+
+            let swayX = Math.sin(claw.angle) * (claw.y - 20);
+            drawCoiledSpring(claw.x, 22, claw.y, swayX);
+
+            let cx = claw.x + swayX;
+            let cy = claw.y;
+
+            // Kepala Cakar Merah Kecil
+            ctx.fillStyle = '#ff4d4d';
+            ctx.fillRect(cx - 4, cy, 8, 10);
+            
+            // Mekanisme Sendi Cakar
+            ctx.fillStyle = '#757575';
+            ctx.beginPath();
+            ctx.arc(cx, cy + 10, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Lebar Bukaan Cakar
+            let open = (gameState === 'dropping' || gameState === 'grabbing') ? 16 : 7;
+
+            ctx.strokeStyle = '#616161';
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+
+            // Sayap Cakar Kiri
+            ctx.beginPath();
+            ctx.moveTo(cx, cy + 10);
+            ctx.quadraticCurveTo(cx - open, cy + 18, cx - open + 2, cy + 28);
             ctx.stroke();
 
+            // Sayap Cakar Kanan
             ctx.beginPath();
-            ctx.moveTo(claw.x + 4, claw.y + 12);
-            ctx.lineTo(claw.x + openSpread, claw.y + 26);
+            ctx.moveTo(cx, cy + 10);
+            ctx.quadraticCurveTo(cx + open, cy + 18, cx + open - 2, cy + 28);
             ctx.stroke();
         }
 
         function drawToys() {
+            // Gambar tumpukan boneka bulat penuh warna dengan emoji besar di tengah
             toys.forEach(toy => {
+                ctx.save();
+                ctx.shadowColor = 'rgba(0,0,0,0.04)';
+                ctx.shadowBlur = 6;
+                ctx.shadowOffsetY = 3;
+
                 ctx.beginPath();
                 ctx.arc(toy.x, toy.y, toy.radius, 0, Math.PI * 2);
-                ctx.fillStyle = toy.color + '22'; 
+                ctx.fillStyle = toy.color + '25'; // Transparansi mewah lembut
                 ctx.fill();
-                
-                ctx.font = "22px Arial";
+                ctx.strokeStyle = toy.color + '66';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                ctx.shadowBlur = 0; 
+                ctx.shadowOffsetY = 0;
+                ctx.font = "26px Arial";
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
                 ctx.fillText(toy.emoji, toy.x, toy.y);
+                ctx.restore();
             });
         }
 
-        function changeStepUI(activeStep) {
+        function changeStepUI(num) {
             step1.classList.remove('active');
             step2.classList.remove('active');
             step3.classList.remove('active');
-            if(activeStep === 1) step1.classList.add('active');
-            if(activeStep === 2) step2.classList.add('active');
-            if(activeStep === 3) step3.classList.add('active');
+            if(num === 1) step1.add('active'); // handled via normal toggle safely
+            document.getElementById(`step${num}`).classList.add('active');
         }
 
         function updateLogic() {
+            claw.angle += (claw.targetAngle - claw.angle) * 0.1;
+            claw.targetAngle *= 0.88; 
+
+            let swayX = Math.sin(claw.angle) * (claw.y - 20);
+            let realX = claw.x + swayX;
+
             if (gameState === 'dropping') {
                 claw.y += claw.speed;
-                if (claw.y >= 210) { 
+                if (claw.y >= 255) { 
                     gameState = 'grabbing';
                     changeStepUI(2);
-                    actionBtn.innerText = "GRABBING...";
                     
                     setTimeout(() => {
                         toys.forEach((toy, idx) => {
-                            let dist = Math.abs(claw.x - toy.x);
-                            if (dist < 22 && !claw.caughtToy) {
+                            let dist = Math.abs(realX - toy.x);
+                            if (dist < 26 && !claw.caughtToy) {
                                 claw.caughtToy = toy;
                                 toys.splice(idx, 1);
                             }
                         });
                         gameState = 'lifting';
-                    }, 600);
+                    }, 400);
                 }
             }
             else if (gameState === 'lifting') {
                 claw.y -= claw.speed;
                 if(claw.caughtToy) {
-                    claw.caughtToy.x = claw.x;
+                    claw.caughtToy.x = realX;
                     claw.caughtToy.y = claw.y + 26;
                 }
-                if (claw.y <= 50) {
+                if (claw.y <= claw.baseY) {
                     gameState = 'returning';
                     changeStepUI(3);
-                    actionBtn.innerText = "DROPPING...";
                 }
             }
             else if (gameState === 'returning') {
-                if (claw.x > 35) {
+                if (claw.x > 45) {
                     claw.x -= claw.speed;
-                    if(claw.caughtToy) claw.caughtToy.x = claw.x;
+                    claw.targetAngle = 0.03; 
+                    if(claw.caughtToy) claw.caughtToy.x = realX;
                 } else {
                     if (claw.caughtToy) {
                         let finalToy = claw.caughtToy;
@@ -349,15 +466,15 @@
                         gameState = 'done';
                         
                         if (finalToy.name === targetToy.name) {
-                            overlay.innerHTML = "<span style='color:#2ecc71'>✅ Verification Success!</span>";
+                            overlay.innerHTML = "<span style='color:#2ecc71'>✅ Verification Success</span>";
                             overlay.style.display = "flex";
                         } else {
-                            overlay.innerHTML = "<span style='color:#e74c3c'>❌ Incorrect Object. Try Again!</span>";
+                            overlay.innerHTML = "<span style='color:#e74c3c'>❌ Incorrect Object</span>";
                             overlay.style.display = "flex";
                             setTimeout(() => { location.reload(); }, 2000);
                         }
                     } else {
-                        overlay.innerHTML = "<span style='color:#7f8c8d'>💨 Missed! Try Again.</span>";
+                        overlay.innerHTML = "<span style='color:#7f8c8d'>💨 Missed! Try Again</span>";
                         overlay.style.display = "flex";
                         setTimeout(() => { location.reload(); }, 2000);
                     }
@@ -368,11 +485,11 @@
         function loop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Drop Zone 
-            ctx.fillStyle = '#f1f2f6';
-            ctx.fillRect(5, 230, 60, 50);
-            ctx.strokeStyle = '#ced6e0';
-            ctx.strokeRect(5, 230, 60, 50);
+            // Kotak Pembuangan Kiri Bawah (Drop Hole)
+            ctx.fillStyle = '#f1f3f5';
+            ctx.fillRect(15, 275, 60, 65);
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.strokeRect(15, 275, 60, 65);
 
             drawToys();
             drawClaw();
@@ -380,27 +497,53 @@
             requestAnimationFrame(loop);
         }
 
-        function moveLeft() {
-            if (gameState === 'move' && claw.x > 80) claw.x -= 12;
-        }
-        function moveRight() {
-            if (gameState === 'move' && claw.x < canvas.width - 30) claw.x += 12;
-        }
-        function triggerGrab() {
-            if (gameState === 'move') {
-                gameState = 'dropping';
-                actionBtn.disabled = true;
+        function controlLeft() {
+            if (gameState !== 'move') return;
+            if (claw.x > 95) {
+                claw.x -= 4;
+                claw.targetAngle = 0.04;
+                joyKnob.style.transform = 'translate(-8px, 0)';
             }
         }
 
-        document.getElementById('left-btn').addEventListener('click', moveLeft);
-        document.getElementById('right-btn').addEventListener('click', moveRight);
-        actionBtn.addEventListener('click', triggerGrab);
+        function controlRight() {
+            if (gameState !== 'move') return;
+            if (claw.x < canvas.width - 45) {
+                claw.x += 4;
+                claw.targetAngle = -0.04;
+                joyKnob.style.transform = 'translate(8px, 0)';
+            }
+        }
 
+        function releaseJoy() {
+            joyKnob.style.transform = 'translate(0, 0)';
+        }
+
+        // Event Listener Klik Tombol Bulat
+        actionBtn.addEventListener('click', () => {
+            if (gameState === 'move') gameState = 'dropping';
+        });
+
+        // Event Listener Gerak Keyboard
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLeft();
-            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveRight();
-            if (e.key === ' ') { e.preventDefault(); triggerGrab(); }
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') controlLeft();
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') controlRight();
+            if (e.key === ' ') { e.preventDefault(); if (gameState === 'move') gameState = 'dropping'; }
+        });
+        window.addEventListener('keyup', (e) => {
+            if (['ArrowLeft','a','A','ArrowRight','d','D'].includes(e.key)) releaseJoy();
+        });
+
+        // Mouse Drag Emulator untuk Joystick di Layar
+        let activeDrag = false;
+        joyBase.addEventListener('mousedown', () => activeDrag = true);
+        window.addEventListener('mouseup', () => { activeDrag = false; releaseJoy(); });
+        window.addEventListener('mousemove', (e) => {
+            if (!activeDrag) return;
+            let bounds = joyBase.getBoundingClientRect();
+            let offset = e.clientX - (bounds.left + bounds.width / 2);
+            if (offset < -6) controlLeft();
+            if (offset > 6) controlRight();
         });
 
         initToys();
