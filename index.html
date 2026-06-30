@@ -215,20 +215,18 @@
         let gameState = 'move'; // move, dropping, grabbing, lifting, returning, done
         let toys = [];
         
-        // Atribut Capit mekanik
+        // Atribut Capit mekanik (Y awal diset agak ke bawah sedikit dari rel agar tali langsung terlihat)
         const claw = {
             x: 165,
-            y: 30,
+            y: 45, 
             width: 30,
             height: 20,
-            targetY: 30,
             speed: 3,
             caughtToy: null
         };
 
         // Spawn Boneka berjejer rapat di bawah
         function initToys() {
-            let positions = [0, 1, 2, 3, 4];
             let targetIdx = Math.floor(Math.random() * 5);
             
             for(let i=0; i<5; i++) {
@@ -244,34 +242,30 @@
             }
         }
 
-        // Menggambar kabel meliuk-liuk (zigzag) yang super smooth tanpa goyang
+        // Menggambar kabel meliuk-liuk (zigzag) aman dan anti eror
         function drawZigZagRope(startX, startY, endY) {
             ctx.beginPath();
             ctx.moveTo(startX, startY);
             
+            const step = 10; 
+            const amplitude = 5; 
             let currentY = startY;
-            const totalLength = endY - startY;
-            
-            // Jarak antar puncak liukan dikunci
-            const step = 12; 
-            const amplitude = 5; // Lebar liukan ke kiri/kanan
-            
-            // Hitung berapa banyak liukan penuh yang muat di panjang tali sekarang
-            const fullSteps = Math.floor(totalLength / step);
+            let i = 1;
 
-            for (let i = 1; i <= fullSteps; i++) {
+            // Gambar loop hanya jika jarak endY sudah melampaui currentY + step
+            while (currentY + step < endY) {
                 currentY = startY + (i * step);
-                // Tentukan arah liukan bergantian konsisten
                 let direction = (i % 2 === 0) ? 1 : -1;
                 ctx.lineTo(startX + (amplitude * direction), currentY);
+                i++;
             }
             
-            // Tarik garis lurus terakhir ke kepala capit agar transisinya mulus
+            // Garis lurus penutup ke cakar
             ctx.lineTo(startX, endY);
             
             ctx.strokeStyle = '#b2bec3';
             ctx.lineWidth = 2;
-            ctx.lineJoin = 'round'; // Membuat sudut tajam zigzag jadi halus
+            ctx.lineJoin = 'round'; 
             ctx.stroke();
         }
 
@@ -284,17 +278,17 @@
             ctx.fillStyle = '#636e72';
             ctx.fillRect(claw.x - 10, 5, 20, 8);
 
-            // Tali Zigzag Smooth
+            // Tali Kawat dari rel (Y=12) sampai ke kepala capit (Y=claw.y)
             drawZigZagRope(claw.x, 12, claw.y);
 
             // Kepala Capit
             ctx.fillStyle = '#d63031';
             ctx.fillRect(claw.x - 8, claw.y, 16, 12);
 
-            // Cakar Kiri & Kanan
+            // Perhitungan cakar menguncup/membuka
             ctx.strokeStyle = '#636e72';
             ctx.lineWidth = 3;
-            let openSpread = (gameState === 'dropping' || gameState === 'grabbing') ? 15 : 6;
+            let openSpread = (gameState === 'dropping' || gameState === 'grabbing') ? 14 : 6;
 
             // Cakar kiri
             ctx.beginPath();
@@ -311,13 +305,11 @@
 
         function drawToys() {
             toys.forEach(toy => {
-                // Gambar bola dasar mainan
                 ctx.beginPath();
                 ctx.arc(toy.x, toy.y, toy.radius, 0, Math.PI * 2);
-                ctx.fillStyle = toy.color + '22'; // Transparan pastel
+                ctx.fillStyle = toy.color + '22'; 
                 ctx.fill();
                 
-                // Gambar Emojinya
                 ctx.font = "22px Arial";
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
@@ -342,7 +334,6 @@
                     changeStepUI(2);
                     actionBtn.innerText = "GRABBING...";
                     
-                    // Deteksi apakah capit menyentuh objek
                     setTimeout(() => {
                         toys.forEach((toy, idx) => {
                             let dist = Math.abs(claw.x - toy.x);
@@ -359,26 +350,81 @@
                 claw.y -= claw.speed;
                 if(claw.caughtToy) {
                     claw.caughtToy.x = claw.x;
-                    claw.caughtToy.y = claw.y + 30;
+                    claw.caughtToy.y = claw.y + 26; // Nempel pas di cakar
                 }
-                if (claw.y <= 30) {
+                if (claw.y <= 45) {
                     gameState = 'returning';
                     changeStepUI(3);
                     actionBtn.innerText = "DROPPING...";
                 }
             }
             else if (gameState === 'returning') {
-                // Bergerak otomatis ke zona drop paling kiri (x = 35)
                 if (claw.x > 35) {
                     claw.x -= claw.speed;
                     if(claw.caughtToy) claw.caughtToy.x = claw.x;
                 } else {
-                    // Sampai di kotak pembuangan, jatuhkan
                     if (claw.caughtToy) {
                         let finalToy = claw.caughtToy;
                         claw.caughtToy = null;
                         gameState = 'done';
                         
-                        // Validasi Keberhasilan Captcha
                         if (finalToy.name === targetToy.name) {
-                            overlay.innerHTML
+                            overlay.innerHTML = "<span style='color:#2ecc71'>✅ Verification Success!</span>";
+                            overlay.style.display = "flex";
+                        } else {
+                            overlay.innerHTML = "<span style='color:#e74c3c'>❌ Incorrect Object. Try Again!</span>";
+                            overlay.style.display = "flex";
+                            setTimeout(() => { location.reload(); }, 2000);
+                        }
+                    } else {
+                        overlay.innerHTML = "<span style='color:#7f8c8d'>💨 Missed! Try Again.</span>";
+                        overlay.style.display = "flex";
+                        setTimeout(() => { location.reload(); }, 2000);
+                    }
+                }
+            }
+        }
+
+        function loop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Drop Zone 
+            ctx.fillStyle = '#f1f2f6';
+            ctx.fillRect(5, 230, 60, 50);
+            ctx.strokeStyle = '#ced6e0';
+            ctx.strokeRect(5, 230, 60, 50);
+
+            drawToys();
+            drawClaw();
+            updateLogic();
+            requestAnimationFrame(loop);
+        }
+
+        function moveLeft() {
+            if (gameState === 'move' && claw.x > 80) claw.x -= 12;
+        }
+        function moveRight() {
+            if (gameState === 'move' && claw.x < canvas.width - 30) claw.x += 12;
+        }
+        function triggerGrab() {
+            if (gameState === 'move') {
+                gameState = 'dropping';
+                actionBtn.disabled = true;
+            }
+        }
+
+        document.getElementById('left-btn').addEventListener('click', moveLeft);
+        document.getElementById('right-btn').addEventListener('click', moveRight);
+        actionBtn.addEventListener('click', triggerGrab);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLeft();
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveRight();
+            if (e.key === ' ') { e.preventDefault(); triggerGrab(); }
+        });
+
+        initToys();
+        loop();
+    </script>
+</body>
+</html>
