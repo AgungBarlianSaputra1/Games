@@ -19,7 +19,6 @@
             min-height: 100vh;
         }
 
-        /* Card container minimalis putih ala gambar */
         .verification-card {
             background: white;
             width: 380px;
@@ -51,7 +50,6 @@
             border-radius: 4px;
         }
 
-        /* Indikator Langkah (1 Move, 2 Grab, 3 Drop) */
         .steps-indicator {
             display: flex;
             justify-content: center;
@@ -71,7 +69,6 @@
             font-weight: bold;
         }
 
-        /* Area Game / Kaca Capit */
         #machine-display {
             width: 100%;
             height: 280px;
@@ -86,7 +83,6 @@
             display: block;
         }
 
-        /* Panel Kontrol Bawah */
         .control-panel {
             margin-top: 16px;
             background: #f8f9fa;
@@ -98,7 +94,6 @@
             gap: 8px;
         }
 
-        /* Joystick tiruan */
         .joystick-wrapper {
             display: flex;
             gap: 4px;
@@ -119,7 +114,6 @@
         }
         .joy-btn:active { background: #eee; }
 
-        /* Tombol Utama */
         .action-button {
             flex-grow: 1;
             height: 44px;
@@ -135,14 +129,12 @@
         .action-button:hover { background: #222; }
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
 
-        /* Info Tambahan di Paling Bawah */
         .footer-hint {
             margin-top: 12px;
             font-size: 11px;
             color: #aaa;
         }
 
-        /* Status Sukses / Gagal Pop-up */
         #status-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -198,7 +190,6 @@
         const step2 = document.getElementById('step2');
         const step3 = document.getElementById('step3');
 
-        // Pool Karakter Toy Story
         const pool = [
             { name: 'Woody', emoji: '🤠', color: '#f1c40f' },
             { name: 'Buzz', emoji: '🚀', color: '#2ecc71' },
@@ -207,28 +198,23 @@
             { name: 'Rex', emoji: '🦖', color: '#27ae60' }
         ];
 
-        // Pilih target acak untuk Captcha
         const targetToy = pool[Math.floor(Math.random() * pool.length)];
         targetNameEl.innerHTML = `${targetToy.emoji} ${targetToy.name}`;
 
-        // Status permainan
-        let gameState = 'move'; // move, dropping, grabbing, lifting, returning, done
+        let gameState = 'move'; 
         let toys = [];
         
-        // Atribut Capit mekanik (Y awal diset agak ke bawah sedikit dari rel agar tali langsung terlihat)
         const claw = {
             x: 165,
-            y: 45, 
+            y: 50, 
             width: 30,
             height: 20,
             speed: 3,
             caughtToy: null
         };
 
-        // Spawn Boneka berjejer rapat di bawah
         function initToys() {
             let targetIdx = Math.floor(Math.random() * 5);
-            
             for(let i=0; i<5; i++) {
                 let toyData = (i === targetIdx) ? targetToy : pool.filter(p => p.name !== targetToy.name)[Math.floor(Math.random() * (pool.length-1))];
                 toys.push({
@@ -242,30 +228,26 @@
             }
         }
 
-        // Menggambar kabel meliuk-liuk (zigzag) aman dan anti eror
-        function drawZigZagRope(startX, startY, endY) {
+        // FUNGSI BARU: Menggambar tali zigzag yang aman & anti-eror
+        function drawSmoothRope(startX, startY, endY) {
             ctx.beginPath();
             ctx.moveTo(startX, startY);
             
-            const step = 10; 
-            const amplitude = 5; 
-            let currentY = startY;
-            let i = 1;
+            let totalLength = endY - startY;
+            let totalSegments = 16; // Jumlah tekukan dikunci statis agar mulus
+            let segmentHeight = totalLength / totalSegments;
+            let amplitude = 5;
 
-            // Gambar loop hanya jika jarak endY sudah melampaui currentY + step
-            while (currentY + step < endY) {
-                currentY = startY + (i * step);
+            for (let i = 1; i < totalSegments; i++) {
+                let nextY = startY + (i * segmentHeight);
                 let direction = (i % 2 === 0) ? 1 : -1;
-                ctx.lineTo(startX + (amplitude * direction), currentY);
-                i++;
+                ctx.lineTo(startX + (amplitude * direction), nextY);
             }
-            
-            // Garis lurus penutup ke cakar
+
             ctx.lineTo(startX, endY);
-            
             ctx.strokeStyle = '#b2bec3';
             ctx.lineWidth = 2;
-            ctx.lineJoin = 'round'; 
+            ctx.lineJoin = 'round';
             ctx.stroke();
         }
 
@@ -274,29 +256,27 @@
             ctx.fillStyle = '#e2e8f0';
             ctx.fillRect(0, 0, canvas.width, 10);
             
-            // Troli Atas
+            // Troli
             ctx.fillStyle = '#636e72';
             ctx.fillRect(claw.x - 10, 5, 20, 8);
 
-            // Tali Kawat dari rel (Y=12) sampai ke kepala capit (Y=claw.y)
-            drawZigZagRope(claw.x, 12, claw.y);
+            // Gambar Tali
+            drawSmoothRope(claw.x, 12, claw.y);
 
             // Kepala Capit
             ctx.fillStyle = '#d63031';
             ctx.fillRect(claw.x - 8, claw.y, 16, 12);
 
-            // Perhitungan cakar menguncup/membuka
+            // Cakar kiri & kanan
             ctx.strokeStyle = '#636e72';
             ctx.lineWidth = 3;
             let openSpread = (gameState === 'dropping' || gameState === 'grabbing') ? 14 : 6;
 
-            // Cakar kiri
             ctx.beginPath();
             ctx.moveTo(claw.x - 4, claw.y + 12);
             ctx.lineTo(claw.x - openSpread, claw.y + 26);
             ctx.stroke();
 
-            // Cakar kanan
             ctx.beginPath();
             ctx.moveTo(claw.x + 4, claw.y + 12);
             ctx.lineTo(claw.x + openSpread, claw.y + 26);
@@ -350,9 +330,9 @@
                 claw.y -= claw.speed;
                 if(claw.caughtToy) {
                     claw.caughtToy.x = claw.x;
-                    claw.caughtToy.y = claw.y + 26; // Nempel pas di cakar
+                    claw.caughtToy.y = claw.y + 26;
                 }
-                if (claw.y <= 45) {
+                if (claw.y <= 50) {
                     gameState = 'returning';
                     changeStepUI(3);
                     actionBtn.innerText = "DROPPING...";
