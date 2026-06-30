@@ -215,7 +215,7 @@
         let gameState = 'move'; // move, dropping, grabbing, lifting, returning, done
         let toys = [];
         
-        // Atribut Capit mekanik zigzag sesuai gambar
+        // Atribut Capit mekanik
         const claw = {
             x: 165,
             y: 30,
@@ -228,7 +228,6 @@
 
         // Spawn Boneka berjejer rapat di bawah
         function initToys() {
-            // Memastikan target masuk ke dalam line-up mainan
             let positions = [0, 1, 2, 3, 4];
             let targetIdx = Math.floor(Math.random() * 5);
             
@@ -245,23 +244,34 @@
             }
         }
 
-        // Menggambar kabel meliuk-liuk (spiral/zigzag line) sesuai gambar rujukan
+        // Menggambar kabel meliuk-liuk (zigzag) yang super smooth tanpa goyang
         function drawZigZagRope(startX, startY, endY) {
             ctx.beginPath();
             ctx.moveTo(startX, startY);
+            
             let currentY = startY;
-            let step = 8;
-            let amplitude = 6;
-            let direction = 1;
+            const totalLength = endY - startY;
+            
+            // Jarak antar puncak liukan dikunci
+            const step = 12; 
+            const amplitude = 5; // Lebar liukan ke kiri/kanan
+            
+            // Hitung berapa banyak liukan penuh yang muat di panjang tali sekarang
+            const fullSteps = Math.floor(totalLength / step);
 
-            while (currentY < endY - step) {
-                currentY += step;
+            for (let i = 1; i <= fullSteps; i++) {
+                currentY = startY + (i * step);
+                // Tentukan arah liukan bergantian konsisten
+                let direction = (i % 2 === 0) ? 1 : -1;
                 ctx.lineTo(startX + (amplitude * direction), currentY);
-                direction *= -1;
             }
+            
+            // Tarik garis lurus terakhir ke kepala capit agar transisinya mulus
             ctx.lineTo(startX, endY);
+            
             ctx.strokeStyle = '#b2bec3';
             ctx.lineWidth = 2;
+            ctx.lineJoin = 'round'; // Membuat sudut tajam zigzag jadi halus
             ctx.stroke();
         }
 
@@ -274,10 +284,10 @@
             ctx.fillStyle = '#636e72';
             ctx.fillRect(claw.x - 10, 5, 20, 8);
 
-            // Tali Zigzag
+            // Tali Zigzag Smooth
             drawZigZagRope(claw.x, 12, claw.y);
 
-            // Kepala Capit Berwarna Merah/Silver sesuai gambar
+            // Kepala Capit
             ctx.fillStyle = '#d63031';
             ctx.fillRect(claw.x - 8, claw.y, 16, 12);
 
@@ -304,7 +314,7 @@
                 // Gambar bola dasar mainan
                 ctx.beginPath();
                 ctx.arc(toy.x, toy.y, toy.radius, 0, Math.PI * 2);
-                ctx.fillStyle = toy.color + '22'; // Transparan sedikit pastel
+                ctx.fillStyle = toy.color + '22'; // Transparan pastel
                 ctx.fill();
                 
                 // Gambar Emojinya
@@ -332,7 +342,7 @@
                     changeStepUI(2);
                     actionBtn.innerText = "GRABBING...";
                     
-                    // Deteksi apakah capit menyentuh objek apa saja
+                    // Deteksi apakah capit menyentuh objek
                     setTimeout(() => {
                         toys.forEach((toy, idx) => {
                             let dist = Math.abs(claw.x - toy.x);
@@ -363,7 +373,7 @@
                     claw.x -= claw.speed;
                     if(claw.caughtToy) claw.caughtToy.x = claw.x;
                 } else {
-                    // Sampai di kotak pembuangan, jatuhkan!
+                    // Sampai di kotak pembuangan, jatuhkan
                     if (claw.caughtToy) {
                         let finalToy = claw.caughtToy;
                         claw.caughtToy = null;
@@ -371,66 +381,4 @@
                         
                         // Validasi Keberhasilan Captcha
                         if (finalToy.name === targetToy.name) {
-                            overlay.innerHTML = "<span style='color:#2ecc71'>✅ Verification Success!</span>";
-                            overlay.style.display = "flex";
-                        } else {
-                            overlay.innerHTML = "<span style='color:#e74c3c'>❌ Incorrect Object. Try Again!</span>";
-                            overlay.style.display = "flex";
-                            setTimeout(() => { location.reload(); }, 2000);
-                        }
-                    } else {
-                        // Jika capit zonk kosong
-                        overlay.innerHTML = "<span style='color:#7f8c8d'>💨 Missed! Try Again.</span>";
-                        overlay.style.display = "flex";
-                        setTimeout(() => { location.reload(); }, 2000);
-                    }
-                }
-            }
-        }
-
-        function loop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Drop Zone (Lubang Pembuangan Hadiah di kiri bawah)
-            ctx.fillStyle = '#f1f2f6';
-            ctx.fillRect(5, 230, 60, 50);
-            ctx.strokeStyle = '#ced6e0';
-            ctx.strokeRect(5, 230, 60, 50);
-
-            drawToys();
-            drawClaw();
-            updateLogic();
-            requestAnimationFrame(loop);
-        }
-
-        // Sistem Penggerak Kontrol
-        function moveLeft() {
-            if (gameState === 'move' && claw.x > 80) claw.x -= 10;
-        }
-        function moveRight() {
-            if (gameState === 'move' && claw.x < canvas.width - 30) claw.x += 10;
-        }
-        function triggerGrab() {
-            if (gameState === 'move') {
-                gameState = 'dropping';
-                actionBtn.disabled = true;
-            }
-        }
-
-        // Event Listener Tombol Layar
-        document.getElementById('left-btn').addEventListener('click', moveLeft);
-        document.getElementById('right-btn').addEventListener('click', moveRight);
-        actionBtn.addEventListener('click', triggerGrab);
-
-        // Event Listener Keyboard (Sama seperti petunjuk gambar)
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLeft();
-            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveRight();
-            if (e.key === ' ') { e.preventDefault(); triggerGrab(); }
-        });
-
-        initToys();
-        loop();
-    </script>
-</body>
-</html>
+                            overlay.innerHTML
